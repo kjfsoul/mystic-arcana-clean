@@ -9,12 +9,33 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+  <link rel="alternate icon" href="/favicon.ico" type="image/x-icon">
 </head>
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
   <!-- Share modal script - loaded after DOM is ready -->
-  <script src="/js/share-modal.js" defer></script>
+  <script src="/share-modal.js"></script>
+  <!-- Fallback inline script in case the external script fails to load -->
+  <script>
+    window.addEventListener('load', function() {
+      // Check if share modal exists after a delay
+      setTimeout(function() {
+        if (!document.getElementById('share-button')) {
+          console.log('Creating share button via fallback script');
+          const btn = document.createElement('button');
+          btn.id = 'share-button';
+          btn.textContent = 'Connect';
+          btn.style.cssText = 'position:fixed;bottom:20px;right:20px;padding:10px 15px;background:#805ad5;color:#fff;border:none;border-radius:4px;cursor:pointer;z-index:1000;';
+          document.body.appendChild(btn);
+
+          btn.addEventListener('click', function() {
+            alert('Connect with Mystic Arcana on social media!');
+          });
+        }
+      }, 2000);
+    });
+  </script>
 </body>
 </html>

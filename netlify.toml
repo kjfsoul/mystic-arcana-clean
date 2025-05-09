@@ -1,6 +1,6 @@
 [build]
-  command = "npm run build"
-  publish = "dist"
+  command = "cd client && npm run build"
+  publish = "client/dist"
   functions = "netlify/functions"
 
 [build.environment]
@@ -33,12 +33,12 @@
   status = 200
 
 [dev]
-  command = "npm run dev"
+  command = "cd client && npm run dev"
   # Use dynamic port - Netlify will find an available one
   autoLaunch = true
   # The targetPort should match the default in vite.config.ts
-  targetPort = 5173
-  publish = "dist"
+  targetPort = 3000
+  publish = "client/dist"
 
 # Function bundle settings
 [functions]
