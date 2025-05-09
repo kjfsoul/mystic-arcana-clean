@@ -1,0 +1,178 @@
+# MysticArcana Technical Architecture Diagram
+
+## Application Architecture Overview
+
+```
++----------------------------------+
+|          CLIENT (FRONTEND)       |
++----------------------------------+
+|                                  |
+|  +--------------------------+    |
+|  | React + TypeScript       |    |
+|  | (Components)             |    |
+|  |                          |    |
+|  | - Tarot Card Components  |    |
+|  | - Daily Card Feature     |    |
+|  | - UI Components          |    |
+|  | - Authentication UI      |    |
+|  +--------------------------+    |
+|             |                    |
+|  +--------------------------+    |
+|  | State Management         |    |
+|  |                          |    |
+|  | - React Query            |    |
+|  | - React Context          |    |
+|  | - Local State            |    |
+|  +--------------------------+    |
+|             |                    |
++-------------|--------------------+
+              |
+              | HTTP/API Calls
+              |
++-------------|--------------------+
+|             v                    |
+|  +-------------------------+     |
+|  | Netlify Functions       |     |
+|  | (Serverless Backend)    |     |
+|  |                         |     |
+|  | - daily-tarot.js        |     |
+|  | - user-readings.js      |     |
+|  | - astrology-charts.js   |     |
+|  | - subscription.js       |     |
+|  +-------------------------+     |
+|             |                    |
+|             | Database Access    |
+|             |                    |
+|  +-------------------------+     |
+|  | Supabase               |     |
+|  | (PostgreSQL)           |     |
+|  |                         |     |
+|  | - Authentication        |     |
+|  | - Data Storage          |     |
+|  | - User Management       |     |
+|  +-------------------------+     |
+|             |                    |
+|             | External Services  |
+|             |                    |
+|  +-------------------------+     |
+|  | Third-party Services    |     |
+|  |                         |     |
+|  | - OpenAI API            |     |
+|  | - Stripe Payments       |     |
+|  +-------------------------+     |
+|                                  |
++----------------------------------+
+        SERVERLESS BACKEND
+```
+
+## Data Flow for Daily Tarot Card Feature
+
+```
++------------------+    1. Request Daily Card     +------------------+
+|                  |-------------------------->   |                  |
+|  React Frontend  |                              | Netlify Function |
+|  (Daily Card     |                              | (daily-tarot.js) |
+|   Component)     |                              |                  |
+|                  |   2. Return Card Data        |                  |
+|                  |   <--------------------------+                  |
++------------------+                              +--------+---------+
+        |                                                  |
+        | 3. Display Card                                  |
+        |                                                  |
+        v                                                  | 4. Query Database
++------------------+                              +--------v---------+
+|                  |                              |                  |
+|  User Interface  |                              |     Supabase     |
+|  (Card Reveal)   |                              |   (PostgreSQL)   |
+|                  |                              |                  |
++------------------+                              +------------------+
+```
+
+## Authentication and Authorization Flow
+
+```
++------------------+    1. Login/Signup Request   +------------------+
+|                  |-------------------------->   |                  |
+|   User Browser   |                              |  Supabase Auth   |
+|                  |                              |                  |
+|                  |   2. Return JWT Token        |                  |
+|                  |   <--------------------------+                  |
++------------------+                              +------------------+
+        |
+        | 3. Store Token
+        |
+        v
++------------------+    4. Authenticated Request  +------------------+
+|                  |-------------------------->   |                  |
+|  React Frontend  |                              | Netlify Function |
+|  (with Auth      |                              | (with Auth       |
+|   Token)         |                              |  Check)          |
+|                  |   5. Return Protected Data   |                  |
+|                  |   <--------------------------+                  |
++------------------+                              +------------------+
+```
+
+## Premium Feature Access Flow
+
+```
++------------------+    1. Request Premium        +------------------+
+|                  |       Feature                |                  |
+|  React Frontend  |-------------------------->   | Netlify Function |
+|                  |                              |                  |
+|                  |   2. Check Subscription      |                  |
+|                  |   <--------------------------+                  |
++------------------+                              +--------+---------+
+        |                                                  |
+        | 3a. Display                                      | 3b. Query User
+        |    Premium Content                               |    Subscription
+        |    (if authorized)                               |
+        v                                                  v
++------------------+                              +------------------+
+|                  |                              |                  |
+|  User Interface  |                              |     Supabase     |
+|                  |                              |   (User Data)    |
++------------------+                              +------------------+
+```
+
+## Critical Pain Points in Architecture
+
+```
++----------------------------------+
+|      CRITICAL PAIN POINTS        |
++----------------------------------+
+
+1. 🚨 DAILY TAROT CARD ISSUE
+   +---------------------------+
+   | - Environment Variables   |
+   | - Image Path Resolution   |
+   | - Error Handling          |
+   +---------------------------+
+
+2. 🚨 ENVIRONMENT CONFIGURATION
+   +---------------------------+
+   | - Inconsistent Variables  |
+   | - Missing Keys in Netlify |
+   | - Frontend/Backend Naming |
+   +---------------------------+
+
+3. 🚧 AUTH FLOW CHALLENGES
+   +---------------------------+
+   | - Inconsistent Access     |
+   |   Control                 |
+   | - Premium Feature Checks  |
+   +---------------------------+
+
+4. 🚧 COMPONENT DUPLICATION
+   +---------------------------+
+   | - Multiple Daily Card     |
+   |   Components              |
+   | - Inconsistent Props      |
+   +---------------------------+
+
+5. 🚧 SERVER MIGRATION
+   +---------------------------+
+   | - Partial Move to         |
+   |   Netlify Functions       |
+   | - API Inconsistencies     |
+   +---------------------------+
+```

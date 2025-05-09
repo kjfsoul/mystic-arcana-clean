@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supabase Environment Check</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .success {
+      color: #2e7d32;
+      background-color: #e8f5e9;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .error {
+      color: #c62828;
+      background-color: #ffebee;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .warning {
+      color: #ef6c00;
+      background-color: #fff3e0;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    code {
+      font-family: monospace;
+      background-color: #f5f5f5;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+    h1 {
+      color: #333;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    button {
+      background-color: #4a148c;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #6a1b9a;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔮 Mystic Arcana: Supabase Environment Check</h1>
+  
+  <div id="results">
+    <p>Checking Supabase environment variables...</p>
+  </div>
+  
+  <button id="checkBtn">Run Check</button>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const resultsDiv = document.getElementById('results');
+      const checkBtn = document.getElementById('checkBtn');
+      
+      function checkSupabaseEnv() {
+        resultsDiv.innerHTML = '<p>Checking Supabase environment variables...</p>';
+        
+        // Check if Vite environment variables are available
+        const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL;
+        const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY;
+        
+        let html = '<h2>Environment Variable Check</h2>';
+        
+        // Check VITE_SUPABASE_URL
+        if (supabaseUrl) {
+          const maskedUrl = supabaseUrl.replace(/^(https:\/\/[a-z0-9]{4})(.+)(\.[a-z]+\.[a-z]+)$/, '$1****$3');
+          html += `<div class="success">✅ VITE_SUPABASE_URL is defined: <code>${maskedUrl}</code></div>`;
+        } else {
+          html += `<div class="error">❌ VITE_SUPABASE_URL is missing. Check your .env file and make sure it's prefixed with VITE_</div>`;
+        }
+        
+        // Check VITE_SUPABASE_ANON_KEY
+        if (supabaseAnonKey) {
+          const maskedKey = supabaseAnonKey.substring(0, 5) + '...' + supabaseAnonKey.substring(supabaseAnonKey.length - 5);
+          html += `<div class="success">✅ VITE_SUPABASE_ANON_KEY is defined: <code>${maskedKey}</code></div>`;
+        } else {
+          html += `<div class="error">❌ VITE_SUPABASE_ANON_KEY is missing. Check your .env file and make sure it's prefixed with VITE_</div>`;
+        }
+        
+        // Add connection test if both variables are present
+        if (supabaseUrl && supabaseAnonKey) {
+          html += `
+            <h2>Connection Test</h2>
+            <p>Attempting to connect to Supabase...</p>
+            <div id="connectionTest">Testing connection...</div>
+          `;
+          
+          resultsDiv.innerHTML = html;
+          
+          // We can't import the Supabase client directly here, so we'll make a simple fetch request
+          // to check if the URL is valid
+          fetch(supabaseUrl + '/rest/v1/tarot_cards?select=count', {
+            headers: {
+              'apikey': supabaseAnonKey,
+              'Authorization': 'Bearer ' + supabaseAnonKey
+            }
+          })
+          .then(response => {
+            const connectionTestDiv = document.getElementById('connectionTest');
+            if (response.ok) {
+              connectionTestDiv.className = 'success';
+              connectionTestDiv.innerHTML = '✅ Successfully connected to Supabase!';
+            } else {
+              connectionTestDiv.className = 'error';
+              connectionTestDiv.innerHTML = `❌ Failed to connect to Supabase. Status: ${response.status} ${response.statusText}`;
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('Response data:', data);
+          })
+          .catch(error => {
+            const connectionTestDiv = document.getElementById('connectionTest');
+            connectionTestDiv.className = 'error';
+            connectionTestDiv.innerHTML = `❌ Error connecting to Supabase: ${error.message}`;
+          });
+        } else {
+          resultsDiv.innerHTML = html;
+        }
+        
+        // Add troubleshooting section
+        html += `
+          <h2>Troubleshooting</h2>
+          <p>If you're seeing errors:</p>
+          <ol>
+            <li>Check that your <code>.env</code> file exists in the project root</li>
+            <li>Ensure it contains the following variables:
+              <pre>VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key</pre>
+            </li>
+            <li>Restart your development server after making changes to <code>.env</code></li>
+            <li>If using Netlify, check that environment variables are set in the Netlify dashboard</li>
+          </ol>
+        `;
+        
+        resultsDiv.innerHTML = html;
+      }
+      
+      // Run check on page load
+      checkSupabaseEnv();
+      
+      // Add button click handler
+      checkBtn.addEventListener('click', checkSupabaseEnv);
+    });
+  </script>
+</body>
+</html>

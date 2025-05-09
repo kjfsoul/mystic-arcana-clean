@@ -1,0 +1,79 @@
+/* Card Animations for MysticArcana */
+
+/* Perspective container for 3D card flipping */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* Preserve the 3D transformation */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* Hide the backface of elements */
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Rotate along Y axis */
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Subtle glow animation for cards */
+@keyframes subtle-pulse {
+  0% {
+    box-shadow: 0 0 10px 1px rgba(212, 175, 55, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px 2px rgba(212, 175, 55, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 10px 1px rgba(212, 175, 55, 0.3);
+  }
+}
+
+.animate-subtle-pulse {
+  animation: subtle-pulse 2s ease-in-out infinite;
+}
+
+/* Sparkle effect for card reveals */
+@keyframes sparkle {
+  0% {
+    background-position: 0% 0%;
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  75% {
+    opacity: 0.6;
+  }
+  100% {
+    background-position: 100% 100%;
+    opacity: 0;
+  }
+}
+
+.animate-sparkle {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(212, 175, 55, 0.6) 1px, transparent 5px);
+  background-size: 25px 25px;
+  pointer-events: none;
+  animation: sparkle 2s ease-out forwards;
+  z-index: 10;
+}
+
+/* Hover effect for cards */
+.card-hover-effect {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.3);
+}

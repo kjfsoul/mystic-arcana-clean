@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supabase Connection Check | Mystic Oracle V2</title>
+  <style>
+    body {
+      font-family: 'Raleway', sans-serif;
+      background-color: #0f0f1a;
+      color: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: rgba(26, 26, 46, 0.7);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+    h1 {
+      color: #d4af37;
+      text-align: center;
+      font-family: 'Cinzel', serif;
+    }
+    .success {
+      background-color: rgba(39, 174, 96, 0.2);
+      border-left: 4px solid #27ae60;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .error {
+      background-color: rgba(231, 76, 60, 0.2);
+      border-left: 4px solid #e74c3c;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 0 4px 4px 0;
+    }
+    code {
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    pre {
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: monospace;
+    }
+    button {
+      background-color: #6831f5;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Raleway', sans-serif;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #5a28d9;
+    }
+    #results {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Supabase Connection Check</h1>
+    <p>This utility checks if your Supabase environment variables are correctly configured.</p>
+    
+    <button id="checkBtn">Check Connection</button>
+    
+    <div id="results"></div>
+  </div>
+
+  <script type="module">
+    document.addEventListener('DOMContentLoaded', () => {
+      const checkBtn = document.getElementById('checkBtn');
+      const resultsDiv = document.getElementById('results');
+      
+      function checkSupabaseEnv() {
+        resultsDiv.innerHTML = '<p>Checking Supabase environment variables...</p>';
+        
+        // Check if Vite environment variables are available
+        const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL;
+        const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY;
+        
+        let html = '<h2>Environment Variable Check</h2>';
+        
+        // Check VITE_SUPABASE_URL
+        if (supabaseUrl) {
+          const maskedUrl = supabaseUrl.replace(/^(https:\/\/[a-z0-9]{4})(.+)(\.[a-z]+\.[a-z]+)$/, '$1****$3');
+          html += `<div class="success">✅ VITE_SUPABASE_URL is defined: <code>${maskedUrl}</code></div>`;
+        } else {
+          html += `<div class="error">❌ VITE_SUPABASE_URL is missing. Check your .env file and make sure it's prefixed with VITE_</div>`;
+        }
+        
+        // Check VITE_SUPABASE_ANON_KEY
+        if (supabaseAnonKey) {
+          const maskedKey = supabaseAnonKey.substring(0, 8) + '****' + supabaseAnonKey.substring(supabaseAnonKey.length - 8);
+          html += `<div class="success">✅ VITE_SUPABASE_ANON_KEY is defined: <code>${maskedKey}</code></div>`;
+        } else {
+          html += `<div class="error">❌ VITE_SUPABASE_ANON_KEY is missing. Check your .env file and make sure it's prefixed with VITE_</div>`;
+        }
+        
+        // Add troubleshooting section
+        html += `
+          <h2>Troubleshooting</h2>
+          <p>If you're seeing errors:</p>
+          <ol>
+            <li>Check that your <code>.env</code> file exists in the project root</li>
+            <li>Ensure it contains the following variables:
+              <pre>VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key</pre>
+            </li>
+            <li>Restart your development server after making changes to <code>.env</code></li>
+            <li>If using Netlify, check that environment variables are set in the Netlify dashboard</li>
+          </ol>
+        `;
+        
+        resultsDiv.innerHTML = html;
+      }
+      
+      // Run check on page load
+      checkSupabaseEnv();
+      
+      // Add button click handler
+      checkBtn.addEventListener('click', checkSupabaseEnv);
+    });
+  </script>
+</body>
+</html>

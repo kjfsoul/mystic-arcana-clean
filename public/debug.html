@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mystic Arcana Debug</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: #0f0f1a;
+      color: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: rgba(26, 26, 46, 0.7);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+    h1 {
+      color: #d4af37;
+      text-align: center;
+    }
+    .success {
+      background-color: rgba(39, 174, 96, 0.2);
+      border-left: 4px solid #27ae60;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .error {
+      background-color: rgba(231, 76, 60, 0.2);
+      border-left: 4px solid #e74c3c;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 0 4px 4px 0;
+    }
+    code {
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    pre {
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: monospace;
+    }
+    button {
+      background-color: #6831f5;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #5a28d9;
+    }
+    #results {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mystic Arcana Debug</h1>
+    <p>This page helps diagnose common issues with the application.</p>
+    
+    <button id="runDebug">Run Diagnostics</button>
+    
+    <div id="results"></div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const debugBtn = document.getElementById('runDebug');
+      const resultsDiv = document.getElementById('results');
+      
+      function runDiagnostics() {
+        resultsDiv.innerHTML = '<p>Running diagnostics...</p>';
+        
+        let html = '<h2>Environment Check</h2>';
+        
+        // Check if running in development or production
+        const isDev = window.location.hostname === 'localhost' || 
+                      window.location.hostname === '127.0.0.1';
+        
+        html += `<div class="success">✅ Running in ${isDev ? 'development' : 'production'} mode</div>`;
+        
+        // Check browser compatibility
+        html += '<h2>Browser Compatibility</h2>';
+        
+        if (typeof window.fetch === 'function') {
+          html += `<div class="success">✅ Fetch API is supported</div>`;
+        } else {
+          html += `<div class="error">❌ Fetch API is not supported</div>`;
+        }
+        
+        if (typeof window.localStorage === 'object') {
+          html += `<div class="success">✅ LocalStorage is supported</div>`;
+        } else {
+          html += `<div class="error">❌ LocalStorage is not supported</div>`;
+        }
+        
+        // Check if React is loaded
+        html += '<h2>React Loading</h2>';
+        
+        try {
+          const rootElement = document.getElementById('root');
+          if (rootElement) {
+            html += `<div class="success">✅ Root element found in DOM</div>`;
+          } else {
+            html += `<div class="error">❌ Root element not found in DOM</div>`;
+          }
+        } catch (e) {
+          html += `<div class="error">❌ Error checking root element: ${e.message}</div>`;
+        }
+        
+        // Check if main script is loading
+        html += '<h2>Script Loading</h2>';
+        
+        const mainScript = document.querySelector('script[src*="main"]');
+        if (mainScript) {
+          html += `<div class="success">✅ Main script tag found: ${mainScript.src}</div>`;
+        } else {
+          html += `<div class="error">❌ Main script tag not found</div>`;
+        }
+        
+        // Add troubleshooting section
+        html += `
+          <h2>Troubleshooting Steps</h2>
+          <ol>
+            <li>Check the browser console for JavaScript errors</li>
+            <li>Verify that all required files are being served correctly</li>
+            <li>Make sure Tailwind CSS is properly configured</li>
+            <li>Check that the React root element exists in index.html</li>
+            <li>Try clearing your browser cache and reloading</li>
+            <li>Restart the development server</li>
+          </ol>
+        `;
+        
+        resultsDiv.innerHTML = html;
+      }
+      
+      // Add button click handler
+      debugBtn.addEventListener('click', runDiagnostics);
+      
+      // Auto-run diagnostics
+      runDiagnostics();
+    });
+  </script>
+</body>
+</html>

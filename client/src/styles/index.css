@@ -1,0 +1,33 @@
+/* client/src/styles/index.css */
+
+/* Tailwind CSS Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import cosmic background styles */
+@import './cosmic-background.css';
+
+/* Global Styles */
+body {
+  @apply bg-black text-gray-100 font-sans antialiased; /* Default sans font, can be overridden by tailwind.config.js */
+}
+
+/* Define your primary heading and body fonts if not fully handled by Tailwind config */
+/* Make sure these fonts are linked in your index.html or imported via @font-face */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-serif; /* Default serif font, can be overridden */
+}
+
+/* Custom utility for perspective needed for 3D transforms if not in Tailwind by default */
+.perspective {
+  perspective: 1000px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden; /* Safari */
+}
+/* Add other global styles or custom component styles here */
