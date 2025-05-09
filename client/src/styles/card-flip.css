@@ -1,0 +1,37 @@
+/* client/src/styles/card-flip.css */
+
+/*
+  Most of the flip animation is handled by Framer Motion in AnimatedTarotCard.tsx using rotateY.
+  This file can be used for:
+  - More complex static state styling for the card faces if needed.
+  - Custom keyframe animations if you choose to use CSS animations for some effects
+    instead of or in addition to Framer Motion.
+  - Fine-tuning the 3D appearance.
+*/
+
+/* Example: Adding a subtle depth or border effect that's tricky with utilities */
+/* This is optional, Framer Motion handles the core flip */
+
+/* .tarot-card-face { */
+  /* Styles for the face of the card, if any special treatment is needed beyond Tailwind */
+  /* e.g., box-shadow: inset 0 0 10px rgba(0,0,0,0.5); */
+/* } */
+
+/* Ensure 3D transform classes are available if not in Tailwind/global index.css */
+/*
+.perspective {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+*/
+
+/* If you decide on more complex CSS-driven reveal/glow animations, they would go here. */
+/* For now, keeping it minimal as Framer Motion is powerful. */
